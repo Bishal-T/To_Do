@@ -1,0 +1,30 @@
+{% extends '_layout.html' %}
+
+
+
+{% block body %}
+
+{{message}}
+<div class="row m-auto">
+    <div class="col"></div>
+    <div class="col">
+        <form method="post">
+            <div class="mb-3">
+            <h1>Add Tasks Below</h1>
+              <label for="task" class="form-label">Tasks</label>
+              <input type="task-content" class="form-control d-inline" id="task-content"  class="task-content" aria-describedby="task">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    </div>
+
+    {%for tasks in tasks%}
+
+    <h1>{{tasks.task_content}}</h1>
+
+    {%endfor%}
+    <div class="col"></div>
+</div>
+
+
+{% endblock %}
