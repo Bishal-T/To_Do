@@ -4,7 +4,7 @@ from src.task_repo import task_singleton
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:bishal@localhost:5432/to_do_list'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:{password}@localhost:5432/to_do_list'
 
 db.init_app(app)
 
