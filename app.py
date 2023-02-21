@@ -1,36 +1,53 @@
-from flask import Flask, render_template, request, Markup
+from flask import Flask, render_template, request, redirect, url_for, flash
 from src.models import db
 from src.task_repo import task_singleton
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 app = Flask(__name__)
+password = os.getenv('DATABASE_PASSWORD')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:{password}@localhost:5432/to_do_list'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:{password}@localhost:5432/To_Do'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 db.init_app(app)
 
 @app.route("/")
 def index():
-    return render_template('index.html')
-
-
-@app.get('/')
-def to_do():
-    content = request.form.get('task-content')
+    allTask = task_singleton.get_all_tasks()
     
-    print(db.query.all())
+    return render_template('index.html', tasks=allTask)
+
+@app.route('/add')
+def add_todo():
+    task_area = request.args.get('task_area')
     
-    if not content:
-        message = """<div class="alert alert-danger" role="alert">
-  This is a danger alert—check it out!
-</div>"""
+    if not task_area:
+        flash("Please enter you task", category='error')
+        return redirect(url_for('index'))
 
-    get_all_task = task_singleton.get_all_tasks()   
-
-    return render_template('index.html', tasks=get_all_task)
-
-
-# @app.get("/test")
-# def test():
-#     get_all_task = task_singleton.get_all_tasks()
+    add_task = task_singleton.create_taks(task_area, False)
     
-#     render_template('index.html', tasks=get_all_task)
+    return redirect(url_for('index'))
+
+@app.route('/delete<int:task_id>')
+def remove_task(task_id):
+    get_single_task = task_singleton.get_task_by_id(task_id)
+    
+    db.session.delete(get_single_task)
+    
+    db.session.commit()
+    
+    return redirect(url_for('index'))
+
+@app.route('/finish<int:task_id>')
+def finish_task(task_id):
+    get_single_task = task_singleton.get_task_by_id(task_id)
+    
+    get_single_task.task_status = True
+    
+    db.session.commit()
+    
+    return redirect(url_for('index'))
+

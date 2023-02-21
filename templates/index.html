@@ -1,30 +1,58 @@
 {% extends '_layout.html' %}
-
-
-
 {% block body %}
 
-{{message}}
-<div class="row m-auto">
-    <div class="col"></div>
-    <div class="col">
-        <form method="post">
-            <div class="mb-3">
-            <h1>Add Tasks Below</h1>
-              <label for="task" class="form-label">Tasks</label>
-              <input type="task-content" class="form-control d-inline" id="task-content"  class="task-content" aria-describedby="task">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </form>
+<section class="vh-100">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-lg-9 col-xl-7">
+        <div class="card rounded-3">
+          <div class="card-body p-4 card-custom rounded-3 ">
+
+            <h4 class="text-center my-3 pb-3">To Do</h4>
+
+            <form class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
+              <div class="col-12">
+                <div class="form-outline">
+                  <input type="text" id="form1" placeholder="Enter a task here" name="task_area" class="form-control" />
+                </div>
+              </div>
+
+              <div class="col-12">
+                <button type="submit" formaction="{{url_for('add_todo')}}"class="btn btn-primary button">Save</button>
+              </div>
+            </form>
+
+            <table class="table mb-4">
+              <thead>
+                <tr class="table-header">
+                  <th scope="col">No.</th>
+                  <th scope="col">Todo item</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%for task in tasks%}
+                <tr>
+                  <th scope="row">{{task.task_id}}</th>
+                  <td>{{task.task_content}}</td>
+                  <td>{{task.task_status}}</td>
+                  <td>
+                    <form class="d-inline p-1">
+                    <button type="submit" formaction="{{url_for('remove_task', task_id=task.task_id)}}" class="btn btn-danger">Delete</button>
+                    <button type="submit" formaction="{{url_for('finish_task', task_id=task.task_id)}}"class="btn btn-success ms-1">Finished</button>
+                  </form>
+                  </td>
+                </tr>
+              </tbody>
+              {%endfor%}
+            </table>
+
+          </div>
+        </div>
+      </div>
     </div>
-
-    {%for tasks in tasks%}
-
-    <h1>{{tasks.task_content}}</h1>
-
-    {%endfor%}
-    <div class="col"></div>
-</div>
-
+  </div>
+</section>
 
 {% endblock %}
